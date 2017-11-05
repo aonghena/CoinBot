@@ -1,6 +1,7 @@
 import discord
 import asyncio
 import requests
+from password import KEY
 
 client = discord.Client()
 
@@ -50,4 +51,4 @@ def coin( x ):
         all += '```'
         return all
  
-client.run('Mzc2NTY5MDAyNzgyMzU5NTU0.DOAV1Q.0hWFtmfd1WRYU6iSXXkiUl8nSaM')
+client.run(KEY)
