@@ -18,23 +18,28 @@ async def on_message(message):
         await client.send_message(message.channel, '```Bitcoin Price !btc, !bitcoin\nEthereum Price !eth, !ethereum\nBoth !coins, !all ```')
     elif message.content.startswith(('!btc', '!bitcoin', '!Bitcoin')):
         price = '```Bitcoin: $'
-        price += coin(1)
+        price += coinPrice(1)
         price += '```'
         await client.send_message(message.channel, price)
     elif message.content.startswith('!bye'):
         await client.send_message(message.channel, '```GFY```')
     elif message.content.startswith(('!eth','!ETH', '!ethereum', '!Ethereum')):
         price = '```Ethereum: $'
-        price += coin(2)
+        price += coinPrice(2)
+        price += '```'
+        await client.send_message(message.channel, price)
+    elif message.content.startswith(('!ltc','!LTC', '!litecoin', '!LiteCoin')):
+        price = '```Litecoin: $'
+        price += coinPrice(3)
         price += '```'
         await client.send_message(message.channel, price)
     elif message.content.startswith(('!coin', '!all', '!COIN', '!Coin')):
-        price = coin(-1)
+        price = coinPrice(-1)
         await client.send_message(message.channel, price)
         
 
         
-def coin( x ):
+def coinPrice( x ):
     if x == 1:
         current = float(requests.get('https://api.coinbase.com/v2/prices/BTC-USD/sell').json()['data']['amount']) + float(requests.get('https://api.coinbase.com/v2/prices/BTC-USD/buy').json()['data']['amount'])
         current = round(current/2,2)
@@ -43,11 +48,17 @@ def coin( x ):
         current = float(requests.get('https://api.coinbase.com/v2/prices/ETH-USD/sell').json()['data']['amount']) + float(requests.get('https://api.coinbase.com/v2/prices/ETH-USD/buy').json()['data']['amount'])
         current = round(current/2,2)
         return str(current)
+    elif x ==3:
+        current = float(requests.get('https://api.coinbase.com/v2/prices/LTC-USD/sell').json()['data']['amount']) + float(requests.get('https://api.coinbase.com/v2/prices/LTC-USD/buy').json()['data']['amount'])
+        current = round(current/2,2)
+        return str(current)
     else:
         all = '```Bitcoin:   $'
-        all += coin(1)
+        all += coinPrice(1)
         all += "\nEthereum:  $"
-        all += coin(2)
+        all += coinPrice(2)
+        all += '\nLitecoin:  $'
+        all += coinPrice(3)
         all += '```'
         return all
  
