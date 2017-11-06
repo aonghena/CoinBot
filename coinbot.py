@@ -59,16 +59,13 @@ async def on_message(message):
         
 def coinPrice( x ):
     if x == 1:
-        current = float(requests.get('https://api.coinbase.com/v2/prices/BTC-USD/sell').json()['data']['amount']) + float(requests.get('https://api.coinbase.com/v2/prices/BTC-USD/buy').json()['data']['amount'])
-        current = round(current/2,2)
+        current = float(requests.get('https://api.coinbase.com/v2/prices/BTC-USD/spot').json()['data']['amount'])
         return current
     elif x == 2:
-        current = float(requests.get('https://api.coinbase.com/v2/prices/ETH-USD/sell').json()['data']['amount']) + float(requests.get('https://api.coinbase.com/v2/prices/ETH-USD/buy').json()['data']['amount'])
-        current = round(current/2,2)
+        current = float(requests.get('https://api.coinbase.com/v2/prices/ETH-USD/spot').json()['data']['amount'])
         return current
     elif x ==3:
-        current = float(requests.get('https://api.coinbase.com/v2/prices/LTC-USD/sell').json()['data']['amount']) + float(requests.get('https://api.coinbase.com/v2/prices/LTC-USD/buy').json()['data']['amount'])
-        current = round(current/2,2)
+        current = float(requests.get('https://api.coinbase.com/v2/prices/LTC-USD/spot').json()['data']['amount'])
         return current
    
 
