@@ -15,7 +15,7 @@ async def on_ready():
 @client.event
 async def on_message(message):
     if message.content.startswith('!help'):
-        await client.send_message(message.channel, '```Bitcoin Price !btc, !bitcoin\nEthereum Price !eth, !ethereum\nBoth !coins, !all ```')
+        await client.send_message(message.channel, '```Bitcoin Price !btc, !bitcoin\nEthereum Price !eth, !ethereum\nBoth !coins, !all\n Other Coins !Coin_ticker ```')
     elif message.content.startswith(('!btc', '!bitcoin', '!Bitcoin')):
         price = '```Bitcoin: $'
         price += str(coinPrice(1)) + ' '
@@ -55,7 +55,22 @@ async def on_message(message):
             all += coinPercent(2) + '%'
         all += '```'
         await client.send_message(message.channel, all)
+            
+    elif message.content.startswith(('!')):
+        t = str(message.content[1:])
+        try:
+            coin = requests.get('https://api.cryptonator.com/api/ticker/' + (t)+ '-usd').json()['ticker']['base']
+            cost = requests.get('https://api.cryptonator.com/api/ticker/' + t + '-usd').json()['ticker']['price']
+            if(float(cost) > 1):
+                cost = round(float(cost),2)
+            price = '```' + str(coin) + ': $'
+            price += str(cost)
+        except:
+            price = '```Ticker Not Found'
+        price += '```'
+        await client.send_message(message.channel, price)
 
+        
         
 def coinPrice( x ):
     if x == 1:
