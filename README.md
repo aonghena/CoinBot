@@ -7,6 +7,6 @@ Supports 300+ cryptocurrencies.
 <br>
 <br>
 <br>
-link:https://developers.coinbase.com/ [coinbase].
+LINK:https://developers.coinbase.com/ [coinbase].
 <br>
-link:https://www.cryptonator.com/ [cryptonator].
+LINK:https://www.cryptonator.com/ [cryptonator].
