@@ -1,7 +1,7 @@
 # CoinBot
 This is a CryptoCurrency Bot for Discord.
 <br>
-Supports 300+ cryptocurrencies.
+Supports 900+ cryptocurrencies.
 
 
 <br>
@@ -9,4 +9,4 @@ Supports 300+ cryptocurrencies.
 <br>
 <a href="https://developers.coinbase.com/">Coinbase</a>
 <br>
-<a href="https://www.cryptonator.com/">Cryptonator</a>
+<a href="http://coincap.io">Coincap</a>

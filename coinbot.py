@@ -2,6 +2,8 @@ import discord
 import asyncio
 import requests
 from password import KEY
+from decimal import *
+from coinNews import coinNews
 
 client = discord.Client()
 
@@ -12,87 +14,103 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
+
+    
 @client.event
 async def on_message(message):
     if message.content.startswith('!help'):
-        await client.send_message(message.channel, '```Bitcoin Price !btc, !bitcoin\nEthereum Price !eth, !ethereum\nBoth !coins, !all\n Other Coins !Coin_ticker ```')
+        await client.send_message(message.channel, '```!btc !bitcoin : to get the latest bitcoin price from coinbase \n!eth !ethereum : to get the latest Ethereum Price'+
+        '\n!ltc !litecoin : to get the latest etherum price from Coinbase: \n!all : get latest eth btc ltc price \n!COIN_TICKER : to get the latest price of that coin'+
+        '\n!news shows the latest cryptocurrency news```')
     elif message.content.startswith(('!btc', '!bitcoin', '!Bitcoin')):
+        cost , change = coinBasePrice(1)
         price = '```Bitcoin: $'
-        price += str(coinPrice(1)) + ' '
-        price += coinPercent(1) + '%'
+        price += str(cost) + ' '
+        price += str(change) + '%'
         price += '```'
         await client.send_message(message.channel, price)
-        
+    
+    elif message.content.startswith(('!news', '!News')):
+        c, b = coinNews()
+        news = str(c)
+        if message.content.endswith('-b'):
+            news = str(b)
+        await client.send_message(message.channel, news)   
+       
     elif message.content.startswith('!bye'):
         await client.send_message(message.channel, '```GFY```')
         
     elif message.content.startswith(('!eth','!ETH', '!ethereum', '!Ethereum')):
+        cost , change = coinBasePrice(2)
         price = '```Ethereum: $'
-        price += str(coinPrice(2)) + ' '
-        price += coinPercent(2) + '%'
+        price += str(cost) + ' '
+        price += str(change) + '%'
         price += '```'
         await client.send_message(message.channel, price)
         
     elif message.content.startswith(('!ltc','!LTC', '!litecoin', '!LiteCoin')):
+        cost , change = coinBasePrice(3)
         price = '```Litecoin: $'
-        price += str(coinPrice(3)) + ' '
-        price += coinPercent(3) + '%'
+        price += str(cost) + ' '
+        price += str(change) + '%'
         price += '```'
         await client.send_message(message.channel, price)
         
-    elif message.content.startswith(('!coin', '!all', '!COIN', '!Coin')):
+    elif message.content.startswith(('!all')):
+        cost , change = coinBasePrice(1)
         all = '```Bitcoin:   $'
-        all += str(coinPrice(1)) + '  ' 
-        if message.content.endswith('-p'):
-            all += coinPercent(1) + '%'
+        all += str(cost) + '  ' 
+        all += str(change) + '%'
+        cost , change = coinBasePrice(2)
         all += "\nEthereum:  $"
-        all += str(coinPrice(2)) + '   '
-        if message.content.endswith('-p'):
-            all += coinPercent(2) + '%'
+        all += str(cost) + '   ' 
+        all += str(change) + '%'
+        cost , change = coinBasePrice(3)
         all += '\nLitecoin:  $'
-        all += str(coinPrice(3)) + '    '
-        if message.content.endswith('-p'):
-            all += coinPercent(2) + '%'
+        all += str(cost) + '    ' 
+        all += str(change) + '%'
         all += '```'
         await client.send_message(message.channel, all)
             
     elif message.content.startswith(('!')):
         t = str(message.content[1:])
-        try:
-            coin = requests.get('https://api.cryptonator.com/api/ticker/' + (t)+ '-usd').json()['ticker']['base']
-            cost = requests.get('https://api.cryptonator.com/api/ticker/' + t + '-usd').json()['ticker']['price']
-            if(float(cost) > 1):
-                cost = round(float(cost),2)
-            price = '```' + str(coin) + ': $'
-            price += str(cost)
-        except:
-            price = '```Ticker Not Found'
+        price = coinCapePrice(t.upper())
         price += '```'
+        
         await client.send_message(message.channel, price)
 
-        
-        
-def coinPrice( x ):
+#coinbase/GDAX price       
+def coinBasePrice(x):
+    TWOPLACES = Decimal(10) ** -2 
     if x == 1:
         current = float(requests.get('https://api.coinbase.com/v2/prices/BTC-USD/spot').json()['data']['amount'])
-        return current
+        per = round(((current/float(requests.get('https://api.gdax.com/products/BTC-USD/stats').json()['open']))-1)*100,2)
     elif x == 2:
         current = float(requests.get('https://api.coinbase.com/v2/prices/ETH-USD/spot').json()['data']['amount'])
-        return current
+        per = round(((current/float(requests.get('https://api.gdax.com/products/ETH-USD/stats').json()['open']))-1)*100,2)
     elif x ==3:
         current = float(requests.get('https://api.coinbase.com/v2/prices/LTC-USD/spot').json()['data']['amount'])
-        return current
-   
+        per = round(((current/float(requests.get('https://api.gdax.com/products/LTC-USD/stats').json()['open']))-1)*100,2)
+    current = Decimal(current).quantize(TWOPLACES)
+    per = Decimal(per).quantize(TWOPLACES)
+    return current, per
+    
+        
+#CoinCap.io price
+def coinCapePrice(t):
+    try:
+        coin = requests.get('http://coincap.io/page/' + t).json()['display_name']
+        cost = requests.get('http://coincap.io/page/' + t).json()['price_usd']
+        per = float(requests.get('http://coincap.io/page/' + t).json()['cap24hrChange'])
+        if(float(cost) > 1):
+            cost = round(float(cost),2)
+        price = '```' + str(coin) + ': $'
+        price += str(cost) + ' '
+        price += str(per)+'%'
+    except:
+        price = '```Ticker Not Found'
 
-def coinPercent( x ):
-    if x == 1:
-        current = round(((coinPrice(1)/float(requests.get('https://api.gdax.com/products/BTC-USD/stats').json()['open']))-1)*100,2)
-        return str(current)
-    elif x == 2:
-        current = round(((coinPrice(2)/float(requests.get('https://api.gdax.com/products/ETH-USD/stats').json()['open']))-1)*100,2)
-        return str(current)
-    elif x == 3:
-        current = round(((coinPrice(3)/float(requests.get('https://api.gdax.com/products/LTC-USD/stats').json()['open']))-1)*100,2)
-        return str(current)
+    return price
+        
 
 client.run(KEY)
