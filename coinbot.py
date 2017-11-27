@@ -10,9 +10,7 @@ CoinBase/GDAX: Bitcoin/Etherum/Litcoin prices
 CoinMarketCap: Other CryptoCoins price
 IEXPrice: Stock ticker price
 google news rss feed: News
-
 #####
-
 Cryptonator, and CoinCap methods are 
 below, but not in use, If you would
 like to switch out CoinMarketCap data
@@ -152,10 +150,10 @@ def IEXPrice(t):
         stockInfo = requests.get('https://api.iextrading.com/1.0/stock/'+ (t)+  '/quote').json()
         company = stockInfo['companyName']
         cost = stockInfo['latestPrice']
-        per = stockInfo['change']
+        per = stockInfo['changePercent']
         price = '```' + str(company) + ' $'
         price += str(cost) + ' '
-        price += str(per) + '%'
+        price += str(per*100) + '%'
     except:
         price = '```Ticker Not Found'
     return price
@@ -190,6 +188,5 @@ def cryptonatorPrice(t):
     except:
         price = '```Ticker Not Found'
     return price
-
 
 client.run(KEY)
