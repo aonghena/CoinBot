@@ -30,11 +30,11 @@ async def on_ready():
 @client.event
 async def on_message(message):
     if message.content.lower().startswith(('!help','<@' + client.user.id + ">")):
-        help = '```!btc !bitcoin : to get the latest bitcoin price from coinbase \n!eth !ethereum : to get the latest Ethereum Price'
+        help = ('```!btc !bitcoin : to get the latest bitcoin price from coinbase \n!eth !ethereum : to get the latest Ethereum Price'
         + '\n!ltc !litecoin : to get the latest etherum price from Coinbase: \n!all : get latest eth btc ltc price '
         + '\n!COIN_TICKER : to get the latest price of the coin' 
         + '\n$STOCK_TICKER : to get the latest price of the ticker'
-        + '\n!news shows the latest cryptocurrency news```'
+        + '\n!news shows the latest cryptocurrency news```')
         await client.send_message(message.channel, help)
     elif message.content.startswith(('!btc', '!bitcoin', '!Bitcoin')):
         cost , change = coinBasePrice(1)
@@ -88,7 +88,7 @@ async def on_message(message):
             
     #Gets price of all other cryptocurrencies 
     elif message.content.startswith(('!')):
-        t = str(message.content[1:])
+        t = str(message.content[1:].split()[0])
         ############################
         '''' currently not in use, but if you would like to switch out 
         where you get your coin data from just un-comment the provider you want
@@ -104,7 +104,7 @@ async def on_message(message):
 
     #Get price of stock ticker
     elif message.content.startswith(('$')):
-        t = str(message.content[1:])
+        t = str(message.content[1:].split()[0])
         price = IEXPrice(t.upper())
         price += '```'
         await client.send_message(message.channel, price)
@@ -152,8 +152,8 @@ def IEXPrice(t):
         cost = stockInfo['latestPrice']
         per = stockInfo['changePercent']
         price = '```' + str(company) + ' $'
-        price += str(cost) + ' '
-        price += str(per*100) + '%'
+        price += str(round(float(cost),2)) + ' '
+        price += str(round((float(per)*100),2)) + '%'
     except:
         price = '```Ticker Not Found'
     return price
@@ -188,5 +188,6 @@ def cryptonatorPrice(t):
     except:
         price = '```Ticker Not Found'
     return price
+
 
 client.run(KEY)
