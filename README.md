@@ -30,14 +30,15 @@ $STOCKTICKER: STOCKTICKER price/24 hr change.<br>
 
 
 #### Setup:<br>
-`git clone https://github.com/aonghena/CoinBot.git`
-`pip install discord.py`
-`pip install feedparser`
-Generate your token <a href="https://discordapp.com/developers/applications/me">here</a>
-Add token to password.
-Then go and replace Client_ID_Key with yours:
-https://discordapp.com/oauth2/authorize?client_id=CLIENT_ID_GOES_HERE&scope=bot&permissions=0
-
+`git clone https://github.com/aonghena/CoinBot.git`<br>
+`pip install discord.py`<br>
+`pip install feedparser`<br>
+Generate your token <a href="https://discordapp.com/developers/applications/me">here</a><br>
+Add token to password.<br>
+Then go and replace Client_ID_Key with yours:<br>
+https://discordapp.com/oauth2/authorize?client_id=CLIENT_ID_GOES_HERE&scope=bot&permissions=0<br>
+<br>
+<br>
 If you can't get the steps above to work, there are tons of examples online that probably do a better job
 at explanning the set up'
 <br>
