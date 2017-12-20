@@ -6,7 +6,7 @@ from decimal import *
 from coinNews import coinNews
 
 '''
-CoinBase/GDAX: Bitcoin/Etherum/Litcoin prices
+CoinBase/GDAX: Bitcoin/Etherum/Litcoin/BCash prices
 CoinMarketCap: Other CryptoCoins price
 IEXPrice: Stock ticker price
 google news rss feed: News
@@ -31,19 +31,13 @@ async def on_ready():
 async def on_message(message):
     if message.content.lower().startswith(('!help','<@' + client.user.id + ">")):
         help = ('```!btc !bitcoin : to get the latest bitcoin price from coinbase \n!eth !ethereum : to get the latest Ethereum Price'
-        + '\n!ltc !litecoin : to get the latest etherum price from Coinbase: \n!all : get latest eth btc ltc price '
+        + '\n!ltc !litecoin : to get the latest etherum price from Coinbase \n!all : get latest eth btc ltc price '
+        + '\n!bch !bitcoincash: to get the latest bitcoin cash price from Coinbase  '
         + '\n!COIN_TICKER : to get the latest price of the coin' 
         + '\n$STOCK_TICKER : to get the latest price of the ticker'
         + '\n!news shows the latest cryptocurrency news```')
         await client.send_message(message.channel, help)
-    elif message.content.startswith(('!btc', '!bitcoin', '!Bitcoin')):
-        cost , change = coinBasePrice(1)
-        price = '```Bitcoin: $'
-        price += str(cost) + ' '
-        price += str(change) + '%'
-        price += '```'
-        await client.send_message(message.channel, price)
-    
+        
     elif message.content.lower().startswith('!news'):
         c, b = coinNews()
         news = str(c)
@@ -53,6 +47,7 @@ async def on_message(message):
        
     elif message.content.lower().startswith('!bye'):
         await client.send_message(message.channel, '```Bye```')
+
         
     elif message.content.lower().startswith(('!eth', '!ethereum')):
         cost , change = coinBasePrice(2)
@@ -70,17 +65,37 @@ async def on_message(message):
         price += '```'
         await client.send_message(message.channel, price)
         
+    elif message.content.lower().startswith(('!bch', '!bitcoincash')):
+        cost , change = coinBasePrice(4)
+        price = '```Bitcoin Cash: $'
+        price += str(cost) + ' ' 
+        price += str(change) + '%'
+        price += '```'
+        await client.send_message(message.channel, price)
+    
+    elif message.content.lower().startswith(('!btc', '!bitcoin', '!Bitcoin')):
+        cost , change = coinBasePrice(1)
+        price = '```Bitcoin: $'
+        price += str(cost) + ' '
+        price += str(change) + '%'
+        price += '```'
+        await client.send_message(message.channel, price)
+
     elif message.content.lower().startswith(('!all')):
         cost , change = coinBasePrice(1)
-        all = '```Bitcoin:   $'
+        all = '```Bitcoin:       $'
         all += str(cost) + '  ' 
         all += str(change) + '%'
         cost , change = coinBasePrice(2)
-        all += "\nEthereum:  $"
+        all += "\nEthereum:      $"
         all += str(cost) + '   ' 
         all += str(change) + '%'
         cost , change = coinBasePrice(3)
-        all += '\nLitecoin:  $'
+        all += '\nLitecoin:      $'
+        all += str(cost) + '    ' 
+        all += str(change) + '%'
+        cost , change = coinBasePrice(4)
+        all += '\nBitcoin Cash:  $'
         all += str(cost) + '    ' 
         all += str(change) + '%'
         all += '```'
@@ -118,9 +133,12 @@ def coinBasePrice(x):
     elif x == 2:
         current = float(requests.get('https://api.coinbase.com/v2/prices/ETH-USD/spot').json()['data']['amount'])
         per = round(((current/float(requests.get('https://api.gdax.com/products/ETH-USD/stats').json()['open']))-1)*100,2)
-    elif x ==3:
+    elif x ==3 :
         current = float(requests.get('https://api.coinbase.com/v2/prices/LTC-USD/spot').json()['data']['amount'])
         per = round(((current/float(requests.get('https://api.gdax.com/products/LTC-USD/stats').json()['open']))-1)*100,2)
+    elif x == 4:
+        current = float(requests.get('https://api.coinbase.com/v2/prices/BCH-USD/spot').json()['data']['amount'])
+        per = round(((current/float(requests.get('https://api.gdax.com/products/BCH-USD/stats').json()['open']))-1)*100,2)
     current = Decimal(current).quantize(TWOPLACES)
     per = Decimal(per).quantize(TWOPLACES)
     return current, per
