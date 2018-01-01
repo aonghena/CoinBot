@@ -8,7 +8,7 @@ Supports 1200+ cryptocurrencies.
 
 
 #### Usage:<br>
-@, !help: Command Info
+!help: Command Info
 
 
 !all: Bitcoin, Ethereum, Litecoin, Bitcoin Cash  price/24hr change.
@@ -39,8 +39,8 @@ Then go and replace Client_ID_Key with yours:<br>
 https://discordapp.com/oauth2/authorize?client_id=CLIENT_ID_GOES_HERE&scope=bot&permissions=0<br>
 <br>
 <br>
-If you can't get the steps above to work, there are tons of examples online that probably do a better job
-at explanning the set up'
+If you can't get generate the token, there are tons of examples online that probably do a better job
+at explanning how to do it.
 <br>
 
 
@@ -50,6 +50,12 @@ at explanning the set up'
  ____________________________________________
 <a href="https://developers.coinbase.com/">Coinbase</a>
 <br>
-<a href="http://coincap.io">Coincap</a>
+<a href="https://api.coinmarketcap.com">CoinMarketCap</a>
 <br>
 <a href="https://iextrading.com/">IEX</a>
+<br>
+<a href="http://stockcharts.com/">StockCharts</a>
+<br>
+<a href="https://cryptohistory.org/">CryptoHistory</a>
+
+
