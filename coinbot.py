@@ -119,7 +119,7 @@ async def on_message(message):
             else:
                 c = discord.Colour(0xffffff)
             #get chart
-            chart =  'http://stockcharts.com/c-sc/sc?s=' + t.upper() + '&p=D&b=5&g=0&i=0&r=1513916172598'
+            chart =  'http://stockcharts.com/c-sc/sc?s=' + t.upper() + '&p=D&b=5&g=0&i=0'
             #Creates embeded message
             embed = discord.Embed(title=company, description=t.upper() + ": $" + str(cost) + " " + str(per) + "% ", color = (c) )
             embed.set_image(url = chart)
