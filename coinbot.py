@@ -4,6 +4,7 @@ import requests
 import feedparser
 from decimal import *
 from password import KEY
+from tabulate import tabulate
 
 '''
 CoinBase/GDAX: Bitcoin/Etherum/Litcoin/BCash prices
@@ -16,24 +17,87 @@ Google news rss feed: News
 
 client = discord.Client()
 
+#Holds User Portfolio
+#This is used for individual lists that users can make when you
+#@coinbot
+portfolio = {}
+
 @client.event
 async def on_ready():
     print('Logged in as')
     print(client.user.name)
     print(client.user.id)
-    await client.change_presence(game=discord.Game(name='Cipher'))
+    await client.change_presence(game=discord.Game(name='IEX'))
 
 @client.event
 async def on_message(message):
-
+    
     #Replies with help info
-    if message.content.lower().startswith(('!help','<@' + client.user.id + '>')):
+    if message.content.lower().startswith(('!help')):
         await client.send_typing(message.channel)
         help = ('```!all : get latest eth btc ltc bch price '
         + '\n!COIN_TICKER : to get the latest price of the coin' 
         + '\n$STOCK_TICKER : to get the latest price of the ticker'
         + '\n!news shows the latest cryptocurrency news```')
         await client.send_message(message.channel, help)
+
+
+    #@coinbot -params
+    #params- 
+    #!coinname (seperated by spaces) 
+    #$stockname (seperated by spaces)
+    #clear (removes current list)
+    #example:
+    #@coinbot $aapl !btc
+    #| Name       | Price    | Change   |
+    #|------------+----------+----------|
+    #| Bitcoin    | $8030.00 | -3.35%   |
+    #| Apple Inc. | $186.99  | -0.63%   |
+    elif message.content.lower().startswith('<@' + client.user.id + '>'):
+        t = (message.content.split(' '))
+        await client.send_typing(message.channel)
+        t.pop(0)
+        if message.author in portfolio:
+            portfolio[message.author].extend(t)
+        else:
+            portfolio[message.author] = []
+            portfolio[message.author].extend(t)
+        portfolio[message.author] = list(set(portfolio[message.author]))
+        post = '```'
+        name = []
+        nCost = []
+        nPer = []
+        for st in portfolio[message.author]:
+            newST = str(st[1:])
+            if st.startswith('!'):
+                coin, cost, per = coinMarketCapPrice(newST.upper())
+                if(cost == -1):
+                    portfolio[message.author].remove(st)
+                else:
+                    name.append(coin)
+                    nCost.append('$'+cost) 
+                    nPer.append(per+'%')
+            elif st.startswith('$'):
+                company, cost, per = IEXPrice(newST.upper())
+                if(cost == -1):
+                    portfolio[message.author].remove(st)
+                else:
+                    name.append(company)
+                    nCost.append('$'+str(cost)) 
+                    nPer.append(str(per)+'%')
+            elif st == 'clear':
+                portfolio[message.author].clear()
+            else:
+                portfolio[message.author].remove(st)
+
+        table = zip(name, nCost, nPer)
+        t = (tabulate(table, tablefmt='orgtbl'))
+        t = '```' + t + '```'
+        await client.send_message(message.channel, t)
+
+
+
+
 
     #Returns most recent news from google.
     ##2 of the most recent news articles  
@@ -45,7 +109,6 @@ async def on_message(message):
             cryptoLinks.append(post.link)
         await client.send_message(message.channel, str(cryptoLinks[0] + '\n' + cryptoLinks[1]))   
 
-    #bye message
     elif message.content.lower().startswith('!bye'):
         await client.send_typing(message.channel)
         await client.send_message(message.channel, '```Bye```')
@@ -70,8 +133,10 @@ async def on_message(message):
         all += str(cost) + '    ' 
         all += str(change) + '%'
         all += '```'
-        await client.send_typing(message.channel)
         await client.send_message(message.channel, all)
+
+    
+
 
     #Gets price of cryptocurrencies aswell as charts (If found)
     elif message.content.startswith(('!')):
@@ -97,10 +162,9 @@ async def on_message(message):
             #get chart
             chart = 'https://cryptohistory.org/charts/light/' + t.lower() + s +'/7d/png'
             #Creates embeded message
-            embed = discord.Embed(title=coin, description=t.upper() + ": $" + cost + " " + per + "% ", color = (c) )
-            embed.set_image(url = chart)
-
-            await client.send_message(message.channel, embed=embed)
+            embedCoin = discord.Embed(title=coin, description=t.upper() + ": $" + cost + " " + per + "% ", color = (c) )
+            embedCoin.set_image(url = chart)
+            await client.send_message(message.channel, embed=embedCoin)
 
     #Get price of stock ticker and chart (If found)
     elif message.content.startswith(('$')):
@@ -118,8 +182,8 @@ async def on_message(message):
                 c = discord.Colour(0x00ff00)
             else:
                 c = discord.Colour(0xffffff)
-            #get chart
-            chart =  'http://stockcharts.com/c-sc/sc?s=' + t.upper() + '&p=D&b=5&g=0&i=0&r=1513916172598'
+            #get chart (. is replace with / primarily for brk.a)
+            chart =  'http://stockcharts.com/c-sc/sc?s=' + t.upper().replace('.','/') + '&p=D&b=5&g=0&i=0'
             #Creates embeded message
             embed = discord.Embed(title=company, description=t.upper() + ": $" + str(cost) + " " + str(per) + "% ", color = (c) )
             embed.set_image(url = chart)
@@ -148,14 +212,17 @@ def coinMarketCapPrice(t):
     elif(t == 'BCH'):
         return 'Bitcoin Cash', str(coinBasePrice(t)[0]),  str(coinBasePrice(t)[1])
     loc = -1
-    coinInfo = requests.get('https://api.coinmarketcap.com/v1/ticker/?limit=1500').json()
-    for list in coinInfo:
-        if list['symbol'] == t:
-            loc = 0
-            coin = list['name']
-            cost = list['price_usd']
-            per = list['percent_change_24h']
-            break
+    try:
+        coinInfo = requests.get('https://api.coinmarketcap.com/v1/ticker/?limit=1500').json()
+        for list in coinInfo:
+            if list['symbol'] == t:
+                loc = 0
+                coin = list['name']
+                cost = list['price_usd']
+                per = list['percent_change_24h']
+                break
+    except:
+        price = -1
     #if ticker not found
     if(loc == -1):
         price = -1
@@ -179,5 +246,7 @@ def IEXPrice(t):
         price = -1
         return price, price, price
     return company, round(float(cost),2), round((float(per)*100),2)
+
+
 
 client.run(KEY)
