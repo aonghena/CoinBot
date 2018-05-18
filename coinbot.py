@@ -109,10 +109,6 @@ async def on_message(message):
             cryptoLinks.append(post.link)
         await client.send_message(message.channel, str(cryptoLinks[0] + '\n' + cryptoLinks[1]))   
 
-    elif message.content.lower().startswith('!bye'):
-        await client.send_typing(message.channel)
-        await client.send_message(message.channel, '```Bye```')
-
     #Return all of the coinbase coin prices (No chart)
     elif message.content.lower().startswith(('!all')):
         await client.send_typing(message.channel)
