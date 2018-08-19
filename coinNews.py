@@ -1,0 +1,1 @@
+#Moved to coinbot.py
