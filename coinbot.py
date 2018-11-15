@@ -7,8 +7,8 @@ from password import KEY
 from tabulate import tabulate
 
 '''
-CoinBase: Bitcoin/Etherum/Litcoin/BCash prices
-CoinMarketCap: Other CryptoCoins price
+CoinBase: Crypto prices
+CoinMarketCap: Other Crypto price
 CryptoHistory: Crypto Charts
 IEXPrice: Stock ticker price
 StockCharts: Stock Charts
@@ -196,21 +196,12 @@ def coinBasePrice(x):
     per = round(((current/float(requests.get('https://api.pro.coinbase.com/products/' + x + '-USD/stats').json()['open']))-1)*100,2)
     current = Decimal(current).quantize(TWOPLACES)
     per = Decimal(per).quantize(TWOPLACES)
-    return current, per
+    return str(current), str(per)
     
 
 #coinMarketCapPrice
 #Return coin info
 def coinMarketCapPrice(t):
-    #Gets Coinbase Pro price instead of using CoinMarketCap
-    if(t == 'BTC'):
-        return 'Bitcoin', str(coinBasePrice(t)[0]), str(coinBasePrice(t)[1])
-    elif(t == 'ETH'):
-        return 'Etherum', str(coinBasePrice(t)[0]),  str(coinBasePrice(t)[1])
-    elif(t == 'LTC'):
-        return 'Litecoin', str(coinBasePrice(t)[0]),  str(coinBasePrice(t)[1])
-    elif(t == 'BCH'):
-        return 'Bitcoin Cash', str(coinBasePrice(t)[0]),  str(coinBasePrice(t)[1])
     loc = -1
     try:
         coinInfo = requests.get('https://api.coinmarketcap.com/v1/ticker/?limit=1500').json()
@@ -221,8 +212,10 @@ def coinMarketCapPrice(t):
                 cost = list['price_usd']
                 per = list['percent_change_24h']
                 break
+        cost, per = coinBasePrice(t)#gets coinbase price if avaliable 
     except:
         price = -1
+    
     #if ticker not found
     if(loc == -1):
         price = -1
