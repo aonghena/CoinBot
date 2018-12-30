@@ -178,12 +178,8 @@ async def on_message(message):
                 c = discord.Colour(0x00ff00)
             else:
                 c = discord.Colour(0xffffff)
-            #get chart (. is replace with / primarily for brk.a)
-            chart =  'http://stockcharts.com/c-sc/sc?s=' + t.upper().replace('.','/') + '&p=D&b=5&g=0&i=0'
-
-            #get chart
-            chart =  'http://stockcharts.com/c-sc/sc?s=' + t.upper() + '&p=D&b=5&g=0&i=0'
-
+            #get chart (. is replace with / for things like brk.a)
+            chart =  'http://c.stockcharts.com/c-sc/sc?s=' + t.upper().replace('.','/') + '&p=D&b=5&g=0&i=0'
             #Creates embeded message
             embed = discord.Embed(title=company, description=t.upper() + ": $" + str(cost) + " " + str(per) + "% ", color = (c) )
             embed.set_image(url = chart)
