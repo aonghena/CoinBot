@@ -1,3 +1,4 @@
+#This supports the most recent discord.py library.
 import discord
 import asyncio
 import requests
@@ -5,8 +6,10 @@ import feedparser
 from decimal import *
 from password import KEY
 from tabulate import tabulate
+from discord.ext import commands
 
-#This is used for discord.py < V 1.0
+#This is used for discord.py >= V1.0
+
 
 '''
 CoinBase: Crypto prices
@@ -16,53 +19,30 @@ IEXPrice: Stock ticker price
 StockCharts: Stock Charts
 Google news rss feed: News
 '''
+description = '''Discord bot for fetching Crypto and Stock Prices in discord'''
+bot = commands.Bot(command_prefix='[!,$]', description=description)
 
-client = discord.Client()
-
-#Holds User Portfolio
-#This is used for individual lists that users can make when you
-#@coinbot
 portfolio = {}
 
-@client.event
+@bot.event
 async def on_ready():
     print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
-    await client.change_presence(game=discord.Game(name='IEX'))
+    print(bot.user.name)
+    print(bot.user.id)
+    print('------')
 
-@client.event
+@bot.event
 async def on_message(message):
-    
-    
-    
-
-    #Replies with help info
     if message.content.lower().startswith(('!help')):
-        await message.channel.send_typing(message.channel)
+        await message.channel.trigger_typing()
         help = ('```!all : get latest eth btc ltc bch price '
         + '\n!COIN_TICKER : to get the latest price of the coin' 
         + '\n$STOCK_TICKER : to get the latest price of the ticker'
-        + '\n!news shows the latest cryptocurrency news```')
-        await message.channel.send(message.channel, help)
-
-    elif message.content.lower().startswith(('we')):
-
-        await message.channel.send('Hello')
-    #@coinbot -params
-    #params- 
-    #!coinname (seperated by spaces) 
-    #$stockname (seperated by spaces)
-    #clear (removes current list)
-    #example:
-    #@coinbot $aapl !btc
-    #| Name       | Price    | Change   |
-    #|------------+----------+----------|
-    #| Bitcoin    | $8030.00 | -3.35%   |
-    #| Apple Inc. | $186.99  | -0.63%   |
-    elif message.content.lower().startswith('<@' + str(client.user.id) + '>'):
+        + '\n!news shows the latest cryptocurrency news!```')
+        await message.channel.send(help)
+    elif message.content.lower().startswith('<@' + str(bot.user.id) + '>'):
         t = (message.content.split(' '))
-        await client.send_typing(message.channel)
+        await message.channel.trigger_typing()
         t.pop(0)
         if message.author in portfolio:
             portfolio[message.author].extend(t)
@@ -100,22 +80,22 @@ async def on_message(message):
         table = zip(name, nCost, nPer)
         t = (tabulate(table, tablefmt='orgtbl'))
         t = '```' + t + '```'
-        await client.send_message(message.channel, t)
+        await message.channel.send(t)
 
-
-    #Returns most recent news from google.
+     #Returns most recent news from google.
     ##2 of the most recent news articles  
     elif message.content.lower().startswith('!news'):
-        await client.send_typing(message.channel)
+        await message.channel.trigger_typing()
         crypto = feedparser.parse("https://news.google.com/news/rss/search/section/q/cryptocurrency/cryptocurrency?hl=en&gl=US&ned=us/.rss")
         cryptoLinks = []
         for post in crypto.entries:
             cryptoLinks.append(post.link)
-        await client.send_message(message.channel, str(cryptoLinks[0] + '\n' + cryptoLinks[1]))   
+        await message.channel.send(str(cryptoLinks[0] + '\n' + cryptoLinks[1]))
+
 
     #Return all of the coinbase coin prices (No chart)
     elif message.content.lower().startswith(('!all')):
-        await client.send_typing(message.channel)
+        await message.channel.trigger_typing()
         cost , change = coinBasePrice('BTC')
         all = '```Bitcoin:       $'
         all += str(cost) + '  ' 
@@ -132,12 +112,11 @@ async def on_message(message):
         all += '\nBitcoin Cash:  $'
         all += str(cost) + '    ' 
         all += str(change) + '%'
-        all += '```'
-        await client.send_message(message.channel, all)
+        all += '```'        
+        await message.channel.send(all)
 
-    #Gets price of cryptocurrencies aswell as charts (If found)
-    elif message.content.startswith(('!')):
-        await client.send_typing(message.channel)
+    elif message.content.startswith("!"):
+        await message.channel.trigger_typing()
         t = str(message.content[1:].split()[0])
         coin, cost, per = coinMarketCapPrice(t.upper())
         #If ticker not found
@@ -161,11 +140,10 @@ async def on_message(message):
             #Creates embeded message
             embedCoin = discord.Embed(title=coin, description=t.upper() + ": $" + cost + " " + per + "% ", color = (c) )
             embedCoin.set_image(url = chart)
-            await client.send_message(message.channel, embed=embedCoin)
+            await message.channel.send(embed=embedCoin)
 
-    #Get price of stock ticker and chart (If found)
-    elif message.content.startswith(('$')):
-        await client.send_typing(message.channel)
+    elif message.content.startswith("$"):
+        await message.channel.trigger_typing()
         t = str(message.content[1:].split()[0])
         company, cost, per = IEXPrice(t.upper())
         #If ticker is not found
@@ -184,7 +162,15 @@ async def on_message(message):
             #Creates embeded message
             embed = discord.Embed(title=company, description=t.upper() + ": $" + str(cost) + " " + str(per) + "% ", color = (c) )
             embed.set_image(url = chart)
-            await client.send_message(message.channel, embed=embed)
+            await message.channel.send(embed=embed)
+
+    
+
+
+
+
+
+
 
 #coinbase price       
 def coinBasePrice(x):
@@ -237,5 +223,5 @@ def IEXPrice(t):
         return price, price, price
     return company, round(float(cost),2), round((float(per)*100),2)
 
-client.run(KEY)
 
+bot.run(KEY)

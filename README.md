@@ -4,6 +4,10 @@ Supports 1200+ cryptocurrencies.
 Supports Stock tickers
 
 
+#### Versions:<br>
+V1: used for python 3.5+ and discord.py 1.0.0+<br>
+otherwise if your using a lower version than use the normal coinbase.py file.<br>
+
 
 
 
@@ -12,7 +16,7 @@ Supports Stock tickers
 !help: Command Info
 
 
-!all: Bitcoin, Ethereum, Litecoin, Bitcoin Cash  price/24hr change.
+!all: Bitcoin, Ethereum, Litecoin, Bitcoin Cash  price/24hr change. (removed in coinbaseV1.py)
 
 
 !news: Return two of the most recent news articles related to cryptocurrency
@@ -27,12 +31,14 @@ $STOCKTICKER: STOCKTICKER price/24 hr change.<br>
 
 @Coinbot params: Generates Users list of coins and stocks<br>
 populate by adding either a coin name !, or adding a stock ticker $
-clear list by adding clear in the param
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example: @coinbot $AAPL !BTC :
-| Name       | Price    | Change   |
-|------------+----------+----------|
-| Bitcoin    | $8030.00 | -3.35%   |
-| Apple Inc. | $186.99  | -0.63%   |
+populate by adding either a coin name !, or adding a stock ticker $
+clear list by adding clear in the param<br>
+Example: @coinbot $AAPL !BTC :<br>
+| Name       | Price    | Change   |<br>
+|------------|----------|----------|<br>
+| Bitcoin    | $8030.00 | -3.35%   |<br>
+| Apple Inc. | $186.99  | -0.63%   |<br>
+
 
 @coinbot clear: removes list
 
