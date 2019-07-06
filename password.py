@@ -1,1 +1,2 @@
-KEY = 'KEY_GOES_HERE'
+KEY = 'Your DISCORD token here'
+IEX_TOKEN = 'Your IEX_TOKEN here'

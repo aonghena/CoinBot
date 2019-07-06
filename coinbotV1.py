@@ -3,13 +3,13 @@ import discord
 import asyncio
 import requests
 import feedparser
+import datetime
 from decimal import *
-from password import KEY
+from password import KEY, IEX_TOKEN
 from tabulate import tabulate
 from discord.ext import commands
 
-#This is used for discord.py >= V1.0
-
+#This is used for discord.py >= V1.0; python 3.5+;
 
 '''
 CoinBase: Crypto prices
@@ -92,36 +92,13 @@ async def on_message(message):
             cryptoLinks.append(post.link)
         await message.channel.send(str(cryptoLinks[0] + '\n' + cryptoLinks[1]))
 
-
-    #Return all of the coinbase coin prices (No chart)
-    elif message.content.lower().startswith(('!all')):
-        await message.channel.trigger_typing()
-        cost , change = coinBasePrice('BTC')
-        all = '```Bitcoin:       $'
-        all += str(cost) + '  ' 
-        all += str(change) + '%'
-        cost , change = coinBasePrice('ETH')
-        all += "\nEthereum:      $"
-        all += str(cost) + '   ' 
-        all += str(change) + '%'
-        cost , change = coinBasePrice('LTC')
-        all += '\nLitecoin:      $'
-        all += str(cost) + '    ' 
-        all += str(change) + '%'
-        cost , change = coinBasePrice('BCH')
-        all += '\nBitcoin Cash:  $'
-        all += str(cost) + '    ' 
-        all += str(change) + '%'
-        all += '```'        
-        await message.channel.send(all)
-
     elif message.content.startswith("!"):
         await message.channel.trigger_typing()
         t = str(message.content[1:].split()[0])
         coin, cost, per = coinMarketCapPrice(t.upper())
         #If ticker not found
         if(cost == -1):
-            await client.send_message(message.channel, '```Ticker Not Found```')
+            await message.channel.send('```Ticker Not Found```')
         else:
             #Gets proper conversion (Charts under .9$ generally don't work)
             if(float(cost) < .9):
@@ -148,7 +125,7 @@ async def on_message(message):
         company, cost, per = IEXPrice(t.upper())
         #If ticker is not found
         if(cost == -1):
-            await client.send_message(message.channel, '```Ticker Not Found```')
+            await message.channel.send('```Ticker Not Found```')
         else:
             #change colors of message if stock is currently up or down
             if(float(per) < 0):
@@ -164,14 +141,6 @@ async def on_message(message):
             embed.set_image(url = chart)
             await message.channel.send(embed=embed)
 
-    
-
-
-
-
-
-
-
 #coinbase price       
 def coinBasePrice(x):
     TWOPLACES = Decimal(10) ** -2 
@@ -181,7 +150,6 @@ def coinBasePrice(x):
     per = Decimal(per).quantize(TWOPLACES)
     return str(current), str(per)
     
-
 #coinMarketCapPrice
 #Return coin info
 def coinMarketCapPrice(t):
@@ -198,22 +166,24 @@ def coinMarketCapPrice(t):
         cost, per = coinBasePrice(t)#gets coinbase price if avaliable 
     except:
         price = -1
-    
     #if ticker not found
     if(loc == -1):
         price = -1
         return price, price, price
     return coin, cost, per
 
-
 #IEXPrice
 #Returns stock info
 def IEXPrice(t):
     try:
-        stockInfo = requests.get('https://api.iextrading.com/1.0/stock/'+ (t)+  '/quote').json()
+        stockInfo = requests.get('https://cloud.iexapis.com/stable/stock/' + (t) +'/quote?token=' + IEX_TOKEN).json()
         company = stockInfo['companyName']
-        cost = stockInfo['latestPrice']
-        per = stockInfo['changePercent']
+        if(stockInfo['latestSource'] == 'Close'):
+            cost = stockInfo['extendedPrice']
+            per = stockInfo['extendedChangePercent']
+        else:
+            cost = stockInfo['latestPrice']
+            per = stockInfo['changePercent']
         price = str(company) + ' $'
         price += str(round(float(cost),2)) + ' '
         price += str(round((float(per)*100),2)) + '%'

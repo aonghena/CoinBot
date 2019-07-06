@@ -5,8 +5,8 @@ Supports Stock tickers
 
 
 #### Versions:<br>
-V1: used for python 3.5+ and discord.py 1.0.0+<br>
-otherwise if your using a lower version than use the normal coinbase.py file.<br>
+coinbotV1.py: used for python 3.5+ and discord.py 1.0.0+<br>
+coinbot.py: if your using a lower version python and discord V.<br>
 
 
 
@@ -53,8 +53,9 @@ Example: @coinbot $AAPL !BTC :<br>
 `pip install discord.py`<br>
 `pip install feedparser`<br>
 `pip install tabulate`<br>
-Generate your token <a href="https://discordapp.com/developers/applications/me">here</a><br>
-Add token to password.<br>
+Create an account and generate and IEXCloud token.<br>
+Generate a discord token <a href="https://discordapp.com/developers/applications/me">here</a><br>
+Add both discord token and IEXCloud token to password.py<br>
 Then go and replace Client_ID_Key with yours:<br>
 https://discordapp.com/oauth2/authorize?client_id=CLIENT_ID_GOES_HERE&scope=bot&permissions=0<br>
 <br>

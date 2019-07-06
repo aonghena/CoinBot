@@ -3,10 +3,10 @@ import asyncio
 import requests
 import feedparser
 from decimal import *
-from password import KEY
+from password import KEY, IEX_TOKEN
 from tabulate import tabulate
 
-#This is used for discord.py < V 1.0
+#This is used for discord.py < V1.0
 
 '''
 CoinBase: Crypto prices
@@ -224,7 +224,7 @@ def coinMarketCapPrice(t):
 #Returns stock info
 def IEXPrice(t):
     try:
-        stockInfo = requests.get('https://api.iextrading.com/1.0/stock/'+ (t)+  '/quote').json()
+        stockInfo = requests.get('https://cloud.iexapis.com/stable/stock/' + (t) +'/quote?token=' + IEX_TOKEN + ').json()
         company = stockInfo['companyName']
         cost = stockInfo['latestPrice']
         per = stockInfo['changePercent']
