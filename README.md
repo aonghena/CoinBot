@@ -14,37 +14,38 @@ coinbot.py: if your using a lower version python and discord V.<br>
 
 #### Usage:<br>
 !help: Command Info
-
-
+  
+  
 !all: Bitcoin, Ethereum, Litecoin, Bitcoin Cash  price/24hr change. (removed in coinbaseV1.py)
-
-
+  
+  
 !news: Return two of the most recent news articles related to cryptocurrency
-
-
+  
+!prez, !dprez, !rprez - PredictIt Market info
+      
 !COINTICKER: COINTICKER price/24 hr change<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example: !BTC: Bitcoin price/24 hr change.
+    
   
-
 $STOCKTICKER: STOCKTICKER price/24 hr change.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example: $AAPL: Apple Share price/24 hr change
-
+  
 @Coinbot params: Generates Users list of coins and stocks<br>
-populate by adding either a coin name !, or adding a stock ticker $
-populate by adding either a coin name !, or adding a stock ticker $
-clear list by adding clear in the param<br>
-Example: @coinbot $AAPL !BTC :<br>
+populate by adding either a coin name !, or adding a stock ticker $  
+populate by adding either a coin name !, or adding a stock ticker $  
+clear list by adding clear in the param<br>  
+Example: @coinbot $AAPL !BTC :<br>  
 | Name       | Price    | Change   |<br>
 |------------|----------|----------|<br>
 | Bitcoin    | $8030.00 | -3.35%   |<br>
 | Apple Inc. | $186.99  | -0.63%   |<br>
-
-
+  
+  
 @coinbot clear: removes list
-
-
-
-
+  
+  
+  
+  
 
 
 
@@ -64,10 +65,10 @@ If you can't get generate the token, there are tons of examples online that prob
 at explanning how to do it.
 <br>
 
-
-
-
-
+  
+  
+  
+  
  ____________________________________________
 <a href="https://developers.coinbase.com/">Coinbase</a>
 <br>
@@ -78,5 +79,7 @@ at explanning how to do it.
 <a href="http://stockcharts.com/">StockCharts</a>
 <br>
 <a href="https://cryptohistory.org/">CryptoHistory</a>
+<br>
+<a href="https://www.predictit.org">PredictIt</a>
 
 

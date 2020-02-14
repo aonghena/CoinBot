@@ -8,6 +8,7 @@ from decimal import *
 from password import KEY, IEX_TOKEN
 from tabulate import tabulate
 from discord.ext import commands
+import json
 
 #This is used for discord.py >= V1.0; python 3.5+;
 
@@ -18,6 +19,7 @@ CryptoHistory: Crypto Charts
 IEXPrice: Stock ticker price
 StockCharts: Stock Charts
 Google news rss feed: News
+PredictIt: Political Market
 '''
 description = '''Discord bot for fetching Crypto and Stock Prices in discord'''
 bot = commands.Bot(command_prefix='[!,$]', description=description)
@@ -78,10 +80,31 @@ async def on_message(message):
                 portfolio[message.author].remove(st)
 
         table = zip(name, nCost, nPer)
-        t = (tabulate(table, tablefmt='orgtbl'))
+        t = (tabulate(table, tablefmt='orgtbl', floatfmt=".2f"))
         t = '```' + t + '```'
         await message.channel.send(t)
 
+    elif message.content.lower().startswith('!prez'):
+        await message.channel.trigger_typing()
+        n, name, nCost, nPer = prez('p')
+        table = zip(name, nCost, nPer)
+        t = (tabulate(table, tablefmt='orgtbl', floatfmt=".2f"))
+        t = '```'+n+'\n'+ t + '```'
+        await message.channel.send(t)
+    elif message.content.lower().startswith('!dprez'):
+        await message.channel.trigger_typing()
+        n, name, nCost, nPer = prez('d')
+        table = zip(name, nCost, nPer)
+        t = (tabulate(table, tablefmt='orgtbl', floatfmt=".2f"))
+        t = '```'+n+'\n'+ t + '```'
+        await message.channel.send(t)
+    elif message.content.lower().startswith('!rprez'):
+        await message.channel.trigger_typing()
+        n, name, nCost, nPer = prez('r')
+        table = zip(name, nCost, nPer)
+        t = (tabulate(table, tablefmt='orgtbl'))
+        t = '```'+n+'\n'+ t + '```'
+        await message.channel.send(t)
      #Returns most recent news from google.
     ##2 of the most recent news articles  
     elif message.content.lower().startswith('!news'):
@@ -192,6 +215,32 @@ def IEXPrice(t):
         price = -1
         return price, price, price
     return company, round(float(cost),2), round((float(per)*100),2)
+#PredictIt
+#Presidential Info
+def prez(ticker):
+    all_markets_url = "https://www.predictit.org/api/marketdata/all/"
+    if(ticker == 'd'):
+        ticker = 15
+    elif(ticker == "r"):
+        ticker = 16
+    else:
+        ticker = 17
+    name = []
+    nCost = []
+    nPer = []
+    r = requests.get(all_markets_url)
+    r.close()
+    markets = json.loads(r.content)["markets"]
+    i = 0
+    for market in (markets[ticker]['contracts']):
+        name.append(market['name'])
+        nCost.append(format(float(market['lastTradePrice']), '.2f'))
+        l = (((market['lastTradePrice']/market['lastClosePrice'])-1)*100)
+        nPer.append("{:02.2f}".format(l) + "%")
+        i+=1
+        if(i == 5):
+            break
+    return markets[ticker]['name'], name, nCost, nPer
 
 
 bot.run(KEY)
