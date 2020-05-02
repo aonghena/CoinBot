@@ -6,6 +6,7 @@ from decimal import *
 from password import KEY, IEX_TOKEN
 from tabulate import tabulate
 
+#Discontinued
 #This is used for discord.py < V1.0
 
 '''
