@@ -5,7 +5,7 @@ import requests
 import feedparser
 import datetime
 from decimal import *
-from password import KEY, IEX_TOKEN
+from password import KEY, IEX_TOKEN, CMK_TOKEN
 from tabulate import tabulate
 from discord.ext import commands
 import json
@@ -176,24 +176,23 @@ def coinBasePrice(x):
 #coinMarketCapPrice
 #Return coin info
 def coinMarketCapPrice(t):
-    loc = -1
-    try:
-        coinInfo = requests.get('https://api.coinmarketcap.com/v1/ticker/?limit=1500').json()
-        for list in coinInfo:
-            if list['symbol'] == t:
-                loc = 0
-                coin = list['name']
-                cost = list['price_usd']
-                per = list['percent_change_24h']
-                break
-        cost, per = coinBasePrice(t)#gets coinbase price if avaliable 
+    price = 0
+    try:        
+        coinInfo = requests.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?&symbol=' + t, headers={'X-CMC_PRO_API_KEY' : CMK_TOKEN}).json()
+        coin = coinInfo['data'][t]['name']
+        try:
+            cost, per = coinBasePrice(t)#gets coinbase price if avaliable 
+        except:
+            TWOPLACES = Decimal(10) ** -2 
+            cost = Decimal(coinInfo['data'][t]['quote']['USD']['price']).quantize(TWOPLACES)
+            per = Decimal(coinInfo['data'][t]['quote']['USD']['percent_change_24h']).quantize(TWOPLACES)
     except:
         price = -1
     #if ticker not found
-    if(loc == -1):
+    if(price == -1):
         price = -1
         return price, price, price
-    return coin, cost, per
+    return str(coin), str(cost), str(per)
 
 #IEXPrice
 #Returns stock info
