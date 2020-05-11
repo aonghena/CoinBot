@@ -201,8 +201,12 @@ def IEXPrice(t):
         stockInfo = requests.get('https://cloud.iexapis.com/stable/stock/' + (t) +'/quote?token=' + IEX_TOKEN).json()
         company = stockInfo['companyName']
         if(stockInfo['latestSource'] == 'Close'):
-            cost = stockInfo['extendedPrice']
-            per = stockInfo['extendedChangePercent']
+            if(stockInfo['extendedPrice'] == None):
+                cost = stockInfo['latestPrice']
+                per = stockInfo['changePercent']
+            else:   
+                cost = stockInfo['extendedPrice']
+                per = stockInfo['extendedChangePercent']
         else:
             cost = stockInfo['latestPrice']
             per = stockInfo['changePercent']
