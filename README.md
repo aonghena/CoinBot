@@ -25,8 +25,9 @@ $STOCKTICKER: STOCKTICKER price/24 hr change.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example: $AAPL<br>
     ![example](https://imgur.com/XLdSgSch.png)  <br>
   
-!all: Bitcoin, Ethereum, Litecoin, Bitcoin Cash  price/24hr change. (removed in coinbaseV1.py)
-  
+!STATEABBREVATION: STATE COVID INFORMATION.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example: !NY<br>
+    ![example](https://imgur.com/a/ZMxaULL)  <br>
   
 !news: Return two of the most recent news articles related to cryptocurrency
   
@@ -61,5 +62,7 @@ You should be all set!
 <a href="https://cryptohistory.org/">CryptoHistory</a>
 <br>
 <a href="https://www.predictit.org">PredictIt</a>
+<br>
+<a href="https://covidtracking.com">CovidTracking</a>
 
 

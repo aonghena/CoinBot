@@ -4,6 +4,7 @@ import asyncio
 import requests
 import feedparser
 import datetime
+import re
 from decimal import *
 from password import KEY, IEX_TOKEN, CMK_TOKEN
 from tabulate import tabulate
@@ -42,48 +43,6 @@ async def on_message(message):
         + '\n$STOCK_TICKER : to get the latest price of the ticker'
         + '\n!news shows the latest cryptocurrency news!```')
         await message.channel.send(help)
-    elif message.content.lower().startswith('<@' + str(bot.user.id) + '>'):
-        t = (message.content.split(' '))
-        await message.channel.trigger_typing()
-        t.pop(0)
-        if message.author in portfolio:
-            portfolio[message.author].extend(t)
-        else:
-            portfolio[message.author] = []
-            portfolio[message.author].extend(t)
-        portfolio[message.author] = list(set(portfolio[message.author]))
-        post = '```'
-        name = []
-        nCost = []
-        nPer = []
-        for st in portfolio[message.author]:
-            newST = str(st[1:])
-            if st.startswith('!'):
-                coin, cost, per = coinMarketCapPrice(newST.upper())
-                if(cost == -1):
-                    portfolio[message.author].remove(st)
-                else:
-                    name.append(coin)
-                    nCost.append('$'+cost) 
-                    nPer.append(per+'%')
-            elif st.startswith('$'):
-                company, cost, per = IEXPrice(newST.upper())
-                if(cost == -1):
-                    portfolio[message.author].remove(st)
-                else:
-                    name.append(company)
-                    nCost.append('$'+str(cost)) 
-                    nPer.append(str(per)+'%')
-            elif st == 'clear':
-                portfolio[message.author].clear()
-            else:
-                portfolio[message.author].remove(st)
-
-        table = zip(name, nCost, nPer)
-        t = (tabulate(table, tablefmt='orgtbl', floatfmt=".2f"))
-        t = '```' + t + '```'
-        await message.channel.send(t)
-
     elif message.content.lower().startswith('!prez'):
         await message.channel.trigger_typing()
         n, name, nCost, nPer = prez('p')
@@ -115,6 +74,11 @@ async def on_message(message):
             cryptoLinks.append(post.link)
         await message.channel.send(str(cryptoLinks[0] + '\n' + cryptoLinks[1]))
 
+    elif re.match("(^![a-zA-Z]{2}$)", message.content) != None:
+        await message.channel.trigger_typing()
+        t = str(message.content[1:].split()[0]).lower()
+        await message.channel.send(embed=COVID(t))
+        #function call here
     elif message.content.startswith("!"):
         await message.channel.trigger_typing()
         t = str(message.content[1:].split()[0])
@@ -244,6 +208,25 @@ def prez(ticker):
         if(i == 5):
             break
     return markets[ticker]['name'], name, nCost, nPer
+
+#COVID CASES
+def COVID(state):
+    c = discord.Colour(0x040000)
+    if(state == 'us'):
+        stats = requests.get('https://covidtracking.com/api/v1/'+ state  +'/current.json')
+        stats0 = stats.json()[0]
+        rate = discord.Embed(title="USA COVID Info", description=str(stats0['dateChecked']), color = (c) )
+    else:
+        stats = requests.get('https://covidtracking.com/api/v1/states/'+ state  +'/current.json')
+        stats0 = stats.json()
+        rate = discord.Embed(title=str(stats0['state'])+ " COVID Info", description=str(stats0['lastUpdateEt']), color = (c) )
+    rate.add_field(name="Daily Cases", value=str(stats0['positiveIncrease']), inline= True)
+    rate.add_field(name="Daily Deaths", value=str(stats0['deathIncrease']), inline= True)
+    rate.add_field(name = "\u200B", value = "\u200B")
+    rate.add_field(name="Total Cases", value=str(stats0['positive']), inline=True)
+    rate.add_field(name="Total Deaths", value=str(stats0['death']), inline=True)
+    rate.add_field(name = "\u200B", value = "\u200B")
+    return rate
 
 
 bot.run(KEY)
