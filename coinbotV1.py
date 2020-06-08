@@ -38,11 +38,18 @@ async def on_ready():
 async def on_message(message):
     if message.content.lower().startswith(('!help')):
         await message.channel.trigger_typing()
-        help = ('```!all : get latest eth btc ltc bch price '
-        + '\n!COIN_TICKER : to get the latest price of the coin' 
-        + '\n$STOCK_TICKER : to get the latest price of the ticker'
-        + '\n!news shows the latest cryptocurrency news!```')
-        await message.channel.send(help)
+        Help = discord.Embed(title="Help Menu", description="Commands")
+        Help.add_field(name="!COIN_TICKER", value="Gets the latest cryptocurrency price")
+        Help.add_field(name = "\u200B", value = "\u200B")
+        Help.add_field(name = "\u200B", value = "\u200B")
+        Help.add_field(name="$STOCK_TICKER", value="Gets the latest stock price")
+        Help.add_field(name = "\u200B", value = "\u200B")
+        Help.add_field(name = "\u200B", value = "\u200B")
+        Help.add_field(name="!prez, !dprez, !rprez", value="PredictIt Market info for presidential candidate")
+        Help.add_field(name = "\u200B", value = "\u200B")
+        Help.add_field(name = "\u200B", value = "\u200B")
+        Help.add_field(name="!news", value="Crypto News")
+        await message.channel.send(embed=Help)
     elif message.content.lower().startswith('!prez'):
         await message.channel.trigger_typing()
         n, name, nCost, nPer = prez('p')
@@ -73,7 +80,6 @@ async def on_message(message):
         for post in crypto.entries:
             cryptoLinks.append(post.link)
         await message.channel.send(str(cryptoLinks[0] + '\n' + cryptoLinks[1]))
-
     elif re.match("(^![a-zA-Z]{2}$)", message.content) != None:
         await message.channel.trigger_typing()
         t = str(message.content[1:].split()[0]).lower()
@@ -212,6 +218,7 @@ def prez(ticker):
 #COVID CASES
 def COVID(state):
     c = discord.Colour(0x040000)
+    states = {"AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","FL":"Florida","GA":"Georgia","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming", "GU":"Guam", "PR":"Puerto Rico", "VI":"Virgin Islands"}
     if(state == 'us'):
         stats = requests.get('https://covidtracking.com/api/v1/'+ state  +'/current.json')
         stats0 = stats.json()[0]
@@ -219,7 +226,7 @@ def COVID(state):
     else:
         stats = requests.get('https://covidtracking.com/api/v1/states/'+ state  +'/current.json')
         stats0 = stats.json()
-        rate = discord.Embed(title=str(stats0['state'])+ " COVID Info", description=str(stats0['lastUpdateEt']), color = (c) )
+        rate = discord.Embed(title=str(states[state.upper()])+ " COVID Data", description=str(stats0['lastUpdateEt']), color = (c) )
     rate.add_field(name="Daily Cases", value=str(stats0['positiveIncrease']), inline= True)
     rate.add_field(name="Daily Deaths", value=str(stats0['deathIncrease']), inline= True)
     rate.add_field(name = "\u200B", value = "\u200B")

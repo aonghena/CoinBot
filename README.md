@@ -27,7 +27,7 @@ $STOCKTICKER: STOCKTICKER price/24 hr change.<br>
   
 !STATEABBREVATION: STATE COVID INFORMATION.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example: !NY<br>
-    ![example](https://i.imgur.com/oIDgifW.png)  <br>
+    ![example](https://i.imgur.com/LJFMDWT.png)  <br>
   
 !news: Return two of the most recent news articles related to cryptocurrency
   
