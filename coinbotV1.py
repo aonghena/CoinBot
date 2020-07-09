@@ -136,10 +136,11 @@ async def on_message(message):
 
 #coinbase price       
 def coinBasePrice(x):
-    TWOPLACES = Decimal(10) ** -2 
+    TWOPLACES = Decimal(10) ** -2
+    OVERPLACE =  Decimal(1000) ** -2
     current = float(requests.get('https://api.coinbase.com/v2/prices/' + x + '-USD/spot').json()['data']['amount'])
     per = round(((current/float(requests.get('https://api.pro.coinbase.com/products/' + x + '-USD/stats').json()['open']))-1)*100,2)
-    current = Decimal(current).quantize(TWOPLACES)
+    current = Decimal(current).quantize(OVERPLACE) if current < .1 else Decimal(current).quantize(TWOPLACES)
     per = Decimal(per).quantize(TWOPLACES)
     return str(current), str(per)
     
@@ -154,7 +155,8 @@ def coinMarketCapPrice(t):
             cost, per = coinBasePrice(t)#gets coinbase price if avaliable 
         except:
             TWOPLACES = Decimal(10) ** -2 
-            cost = Decimal(coinInfo['data'][t]['quote']['USD']['price']).quantize(TWOPLACES)
+            OVERPLACE =  Decimal(1000) ** -2
+            cost = Decimal(coinInfo['data'][t]['quote']['USD']['price']).quantize(TWOPLACES) if  Decimal(coinInfo['data'][t]['quote']['USD']['price']) > .1 else Decimal(coinInfo['data'][t]['quote']['USD']['price']).quantize(OVERPLACE)
             per = Decimal(coinInfo['data'][t]['quote']['USD']['percent_change_24h']).quantize(TWOPLACES)
     except:
         price = -1
