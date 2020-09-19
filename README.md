@@ -31,7 +31,7 @@ $STOCKTICKER: STOCKTICKER price/24 hr change.<br>
   
 !news: Return two of the most recent news articles related to cryptocurrency
   
-!prez, !dprez, !rprez - PredictIt Market info
+!prez - PredictIt Market info
 
 
 #### Setup:<br>

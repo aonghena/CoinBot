@@ -57,20 +57,6 @@ async def on_message(message):
         t = (tabulate(table, tablefmt='orgtbl', floatfmt=".2f"))
         t = '```'+n+'\n'+ t + '```'
         await message.channel.send(t)
-    elif message.content.lower().startswith('!dprez'):
-        await message.channel.trigger_typing()
-        n, name, nCost, nPer = prez('d')
-        table = zip(name, nCost, nPer)
-        t = (tabulate(table, tablefmt='orgtbl', floatfmt=".2f"))
-        t = '```'+n+'\n'+ t + '```'
-        await message.channel.send(t)
-    elif message.content.lower().startswith('!rprez'):
-        await message.channel.trigger_typing()
-        n, name, nCost, nPer = prez('r')
-        table = zip(name, nCost, nPer)
-        t = (tabulate(table, tablefmt='orgtbl'))
-        t = '```'+n+'\n'+ t + '```'
-        await message.channel.send(t)
      #Returns most recent news from google.
     ##2 of the most recent news articles  
     elif message.content.lower().startswith('!news'):
@@ -194,12 +180,7 @@ def IEXPrice(t):
 #Presidential Info
 def prez(ticker):
     all_markets_url = "https://www.predictit.org/api/marketdata/all/"
-    if(ticker == 'd'):
-        ticker = 15
-    elif(ticker == "r"):
-        ticker = 16
-    else:
-        ticker = 17
+    ticker = 12
     name = []
     nCost = []
     nPer = []
