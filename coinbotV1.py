@@ -5,7 +5,7 @@ import requests
 import feedparser
 import datetime
 import re
-from decimal import *
+from decimal import Decimal
 from password import KEY, IEX_TOKEN, CMK_TOKEN
 from tabulate import tabulate
 from discord.ext import commands

@@ -2,7 +2,7 @@ import discord
 import asyncio
 import requests
 import feedparser
-from decimal import *
+from decimal import Decimal
 from password import KEY, IEX_TOKEN
 from tabulate import tabulate
 
@@ -225,7 +225,7 @@ def coinMarketCapPrice(t):
 #Returns stock info
 def IEXPrice(t):
     try:
-        stockInfo = requests.get('https://cloud.iexapis.com/stable/stock/' + (t) +'/quote?token=' + IEX_TOKEN + ').json()
+        stockInfo = requests.get('https://cloud.iexapis.com/stable/stock/' + (t) +'/quote?token=' + IEX_TOKEN).json()
         company = stockInfo['companyName']
         cost = stockInfo['latestPrice']
         per = stockInfo['changePercent']
