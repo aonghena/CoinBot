@@ -16,9 +16,8 @@ import json
 '''
 CoinBase: Crypto prices
 CoinMarketCap: Other Crypto price
-CryptoHistory: Crypto Charts
 IEXPrice: Stock ticker price
-StockCharts: Stock Charts
+StockCharts: Crypto/Stock Charts
 Google news rss feed: News
 PredictIt: Political Market
 '''
@@ -50,15 +49,6 @@ async def on_message(message):
         Help.add_field(name = "\u200B", value = "\u200B")
         Help.add_field(name="!news", value="Crypto News")
         await message.channel.send(embed=Help)
-    elif message.content.lower().startswith('!prez'):
-        await message.channel.trigger_typing()
-        n, name, nCost, nPer = prez('p')
-        table = zip(name, nCost, nPer)
-        t = (tabulate(table, tablefmt='orgtbl', floatfmt=".2f"))
-        t = '```'+n+'\n'+ t + '```'
-        await message.channel.send(t)
-     #Returns most recent news from google.
-    ##2 of the most recent news articles  
     elif message.content.lower().startswith('!news'):
         await message.channel.trigger_typing()
         crypto = feedparser.parse("https://news.google.com/news/rss/search/section/q/cryptocurrency/cryptocurrency?hl=en&gl=US&ned=us/.rss")
@@ -79,11 +69,6 @@ async def on_message(message):
         if(cost == -1):
             await message.channel.send('```Ticker Not Found```')
         else:
-            #Gets proper conversion (Charts under .9$ generally don't work)
-            if(float(cost) < .9):
-                s = '-btc'
-            else:
-                s = '-usdt'
             #change colors of message if coin is currently up or down
             if(float(per) < 0):
                 c = discord.Colour(0xCD0000)
@@ -91,8 +76,7 @@ async def on_message(message):
                 c = discord.Colour(0x00ff00)
             else:
                 c = discord.Colour(0xffffff)
-            #get chart
-            chart = 'https://cryptohistory.org/charts/light/' + t.lower() + s +'/7d/png'
+            chart =  'http://c.stockcharts.com/c-sc/sc?s=%24' + t.upper()+ 'USD&p=D&b=5&g=0&i=0'
             #Creates embeded message
             embedCoin = discord.Embed(title=coin, description=t.upper() + ": $" + cost + " " + per + "% ", color = (c) )
             embedCoin.set_image(url = chart)
@@ -102,7 +86,6 @@ async def on_message(message):
         await message.channel.trigger_typing()
         t = str(message.content[1:].split()[0])
         company, cost, per = IEXPrice(t.upper())
-        #If ticker is not found
         if(cost == -1):
             await message.channel.send('```Ticker Not Found```')
         else:
@@ -176,27 +159,6 @@ def IEXPrice(t):
         price = -1
         return price, price, price
     return company, round(float(cost),2), round((float(per)*100),2)
-#PredictIt
-#Presidential Info
-def prez(ticker):
-    all_markets_url = "https://www.predictit.org/api/marketdata/all/"
-    ticker = 12
-    name = []
-    nCost = []
-    nPer = []
-    r = requests.get(all_markets_url)
-    r.close()
-    markets = json.loads(r.content)["markets"]
-    i = 0
-    for market in (markets[ticker]['contracts']):
-        name.append(market['name'])
-        nCost.append(format(float(market['lastTradePrice']), '.2f'))
-        l = (((market['lastTradePrice']/market['lastClosePrice'])-1)*100)
-        nPer.append("{:02.2f}".format(l) + "%")
-        i+=1
-        if(i == 5):
-            break
-    return markets[ticker]['name'], name, nCost, nPer
 
 #COVID CASES
 def COVID(state):

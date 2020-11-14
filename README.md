@@ -19,7 +19,7 @@ coinbot.py: pytthon < 3.4 discord.py < V1.0 (not maintained).<br>
   
 !COINTICKER: COINTICKER price/24 hr change<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example: !BTC<br>
-    ![example](https://i.imgur.com/kgFLGHQ.png)  <br>
+    ![example](https://i.imgur.com/J5VZFtk.png)  <br>
   
 $STOCKTICKER: STOCKTICKER price/24 hr change.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example: $AAPL<br>
@@ -58,8 +58,6 @@ You should be all set!
 <a href="https://iextrading.com/">IEX</a>
 <br>
 <a href="http://stockcharts.com/">StockCharts</a>
-<br>
-<a href="https://cryptohistory.org/">CryptoHistory</a>
 <br>
 <a href="https://www.predictit.org">PredictIt</a>
 <br>

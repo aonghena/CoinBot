@@ -12,9 +12,8 @@ from tabulate import tabulate
 '''
 CoinBase: Crypto prices
 CoinMarketCap: Other Crypto price
-CryptoHistory: Crypto Charts
 IEXPrice: Stock ticker price
-StockCharts: Stock Charts
+StockCharts: Crypto/Stock Charts
 Google news rss feed: News
 '''
 
@@ -145,11 +144,6 @@ async def on_message(message):
         if(cost == -1):
             await client.send_message(message.channel, '```Ticker Not Found```')
         else:
-            #Gets proper conversion (Charts under .9$ generally don't work)
-            if(float(cost) < .9):
-                s = '-btc'
-            else:
-                s = '-usdt'
             #change colors of message if coin is currently up or down
             if(float(per) < 0):
                 c = discord.Colour(0xCD0000)
@@ -158,7 +152,7 @@ async def on_message(message):
             else:
                 c = discord.Colour(0xffffff)
             #get chart
-            chart = 'https://cryptohistory.org/charts/light/' + t.lower() + s +'/7d/png'
+            chart =  'http://c.stockcharts.com/c-sc/sc?s=%24' + t.upper()+ 'USD&p=D&b=5&g=0&i=0'
             #Creates embeded message
             embedCoin = discord.Embed(title=coin, description=t.upper() + ": $" + cost + " " + per + "% ", color = (c) )
             embedCoin.set_image(url = chart)
