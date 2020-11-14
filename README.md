@@ -19,7 +19,7 @@ coinbot.py: pytthon < 3.4 discord.py < V1.0 (not maintained).<br>
   
 !COINTICKER: COINTICKER price/24 hr change<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example: !BTC<br>
-    ![example](https://i.imgur.com/J5VZFtk.png)  <br>
+    <a href="url"><img src="https://i.imgur.com/J5VZFtk.png" height="401" width="386" ></a>
   
 $STOCKTICKER: STOCKTICKER price/24 hr change.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example: $AAPL<br>
